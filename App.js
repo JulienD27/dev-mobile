@@ -20,7 +20,17 @@ function HomeScreen({ navigation }) {
             <input type="text" value={pluie} onChange={e => setPluie(e.target.value)} placeholder="Pluie" style={{padding : 8, margin : 5}}></input>
             <input type="text" value={denivele} onChange={e => setDenivele(e.target.value)} placeholder="Dénivelé" style={{padding : 8, margin : 5}}></input>
             <input type="text" value={repas} onChange={e => setRepas(e.target.value)} placeholder="Repas" style={{padding : 8, margin : 5}}></input>
-            <Slider maximumValue={5} minimumValue={0} value={agreable} onValueChange={(agreable) => setState({agreable})}/>
+        </View>),
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderColor: 'blue', shadowColor: 'blue'}}>
+            <Slider style={{ width: 300, height: 40 }}
+                    step={1}
+                    maximumValue={5}
+                    minimumValue={0}
+                    value={agreable}
+                    thumbTintColor='rgb(252, 228, 149)'
+                    onValueChange={setAgreable}
+            />
+        </View>
 
             <Button title="Valider" onPress={
                 () => {
@@ -34,7 +44,8 @@ function HomeScreen({ navigation }) {
 }
 function ProfileScreen() {
     return (
-        <View>
+        <View style={{ flex: 1, justifyContent: 'center',
+            alignItems: 'center', borderColor: 'blue', shadowColor: 'blue'}}>
             <Text>Activities</Text>
             <Button
                 title="Go to Details..."
