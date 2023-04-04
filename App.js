@@ -3,7 +3,7 @@ import {Button, Text, TextInput, View} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import  Slider  from '@react-native-community/slider';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 function HomeScreen({ addNavigation }) {
     const [text, setText] = React.useState({});
@@ -27,7 +27,7 @@ function HomeScreen({ addNavigation }) {
             Agreable : agreable,
         };
         setText(nouvelle);
-        console.log(nouvelle);
+        //console.log(nouvelle);
         addNavigation(nouvelle);
         setId(id + 1);
     };
@@ -84,49 +84,55 @@ function ProfileScreen({navigation}) {
     );
 }
 
+const CalculerMoyenne = (tableau) => {
+    const somme = tableau.reduce((acc, curr) => {
+        for (const key in curr) {
+            console.log(curr[key])
+            console.log(acc[key])
+            if (key in acc) {
+                acc[key] += Number(curr[key]);
+            } else {
+                acc[key] = Number(curr[key]);
+            }
+        }
+        return acc;
+    }, {});
+    const m = Object.fromEntries(
+        Object.entries(somme).map(([key, value]) => [key, value / tableau.length])
+    );
+    return m;
+};
+
 function DataPage(navigation) {
-    const calculeDistanceMoyenne = () => {
-        let distance = 0;
-        navigation.forEach((item) => {
-            distance += item.distance.valueOf();
-        });
-        return setDistanceMoyenne(distance / navigation.length);
-    }
+    //creer statistique qui contient les moyennes de chaque attribut de navigation
+    const [statistique, setStatistique] = React.useState({
+        distanceMoy : CalculerMoyenne(navigation.navigation).Distance_parcourue,
+        temperatureMoy : CalculerMoyenne(navigation.navigation).Temperature,
+        deniveleMoy : CalculerMoyenne(navigation.navigation).Denivele,
+        agreableMoy : CalculerMoyenne(navigation.navigation).Agreable,
+    });
+    useEffect(() => {
+        setStatistique({
+            distanceMoy : CalculerMoyenne(navigation.navigation).Distance_parcourue,
+            temperatureMoy : CalculerMoyenne(navigation.navigation).Temperature,
+            deniveleMoy : CalculerMoyenne(navigation.navigation).Denivele,
+            agreableMoy : CalculerMoyenne(navigation.navigation).Agreable,
+        })
+    }, [navigation.navigation])
 
-    const calculeTemperatureMoyenne = () => {
-        let temperature = 0;
-        navigation.forEach((item) => {
-            temperature += item.temperature.valueOf();
-        });
-        return setTemperatureMoyenne(temperature / navigation.length);
-    }
+    console.log(statistique)
+    console.log(navigation.navigation.length)
+    console.log(navigation)
 
-    const calculeDeniveleMoyenne = () => {
-        let denivele = 0;
-        navigation.forEach((item) => {
-            denivele += item.denivele;
-        });
-        return setDeniveleMoyenne(denivele / navigation.length);
-    }
 
-    const calculeAgreableMoyenne = () => {
-        let agreable = 0;
-        navigation.forEach((item) => {
-            agreable += item.agreable;
-        });
-        return setAgreableMoyenne(agreable / navigation.length);
-    }
-
-    const distanceMoyenne = calculeDistanceMoyenne();
-    const temperatureMoyenne = calculeTemperatureMoyenne();
-    const deniveleMoyenne = calculeDeniveleMoyenne();
-    const agreableMoyenne = calculeAgreableMoyenne();
     return (
         <View style={{ flex: 1, justifyContent: 'center',
             alignItems: 'center', borderColor: 'blue', shadowColor: 'blue'}}>
             <h1>Rapport</h1>
-            <Text>Distance moyenne : {distanceMoyenne}</Text><br/>
-            <Text>Température moyenne : {temperatureMoyenne}</Text><br/>
+            <Text>Distance moyenne : {statistique.distanceMoy}</Text><br/>
+            <Text>Température moyenne : {statistique.temperatureMoy}</Text><br/>
+            <Text>Dénivelé moyen : {statistique.deniveleMoy}</Text><br/>
+            <Text>Activité agréable : {statistique.agreableMoy}</Text><br/>
         </View>
 
     );
@@ -136,13 +142,12 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
     const [navigation, setNavigation] = useState([]);
-    const [distanceMoyenne, setDistanceMoyenne] = useState(0);
-    const [temperatureMoyenne, setTemperatureMoyenne] = useState(0);
 
 
     const addNavigation = (nouvelle) => {
         setNavigation([...navigation, nouvelle]);
-        console.log([...navigation, nouvelle])
+        //console.log([...navigation, nouvelle])
+        console.log(navigation)
     }
 
 
